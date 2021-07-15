@@ -1,32 +1,40 @@
 import smtplib
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 
-import email
-import email.mime.application
+strFrom = 'gexar47@gmail.com'
+strTo = 'gexar47@mail.ru'
 
-from_email = 'gexar47@gmail.com'
-password = 'nameless47ok'
+# Create the root message 
 
-msg = MIMEMultipart()
-msg['Subject'] = 'Тут заголовок'
-msg['From'] = from_email
+msgRoot = MIMEMultipart('related')
+msgRoot['Subject'] = 'Тут заголовок письма'
+msgRoot['From'] = strFrom
+msgRoot['To'] = strTo
 
-to_email = 'gexar47@mail.ru'
-message = 'Тут может быть сообщение'
+msgRoot.preamble = 'Multi-part message in MIME format.'
 
-msg.attach(MIMEText(message, 'plain'))
+msgAlternative = MIMEMultipart('alternative')
+msgRoot.attach(msgAlternative)
 
-filename='list.jpeg'
-fp=open(filename,'rb')
-att = email.mime.application.MIMEApplication(fp.read(),_subtype="jpeg")
+msgText = MIMEText('Alternative plain text message.')
+msgAlternative.attach(msgText)
+
+msgText = MIMEText('<b>Тут <i>может</i> быть</b> любой текст.<br><img src="cid:image1"><br>И тут может быть текст', 'html')
+msgAlternative.attach(msgText)
+
+#Attach Image 
+fp = open('MMA-&-Box-new.jpg', 'rb') #Read image 
+msgImage = MIMEImage(fp.read())
 fp.close()
-att.add_header('Content-Disposition','attachment',filename=filename)
-msg.attach(att)
+
+# Define the image's ID as referenced above
+msgImage.add_header('Content-ID', '<image1>')
+msgRoot.attach(msgImage)
 
 server = smtplib.SMTP('smtp.gmail.com: 587')
 server.starttls()
-server.login(from_email, password)
-server.sendmail(from_email, to_email, msg.as_string())
+server.login('gexar47@gmail.com', 'nameless47ok')
+server.sendmail(strFrom, strTo, msgRoot.as_string())
 server.quit()
-
