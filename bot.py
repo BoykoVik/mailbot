@@ -43,7 +43,7 @@ if ans == 'да':
             msgText = MIMEText('Alternative plain text message.')
             msgAlternative.attach(msgText)
 
-            msgText = MIMEText('<img src="cid:image1"><br>И тут может быть текст', 'html') #<b>Тут <i>может</i> быть любой текст.</b><br>
+            msgText = MIMEText('<img src="cid:image1">', 'html') #<b>Тут <i>может</i> быть любой текст.</b><br>
             msgAlternative.attach(msgText)
 
             #загрузка изображения
