@@ -2,8 +2,9 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
-from settings import SENDERS, TITLES, ONE_MAIL_MATCH, FILES_IMG, TIME_RAGE
+from settings import SENDERS, TITLES, ONE_MAIL_MATCH, FILES_IMG, TIME_RAGE_from, TIME_RAGE_to
 from time import sleep
+import random
 
 f = open('list.txt')
 list_emails = []
@@ -15,16 +16,22 @@ for line in f:
 
 quant_senders = len(SENDERS)
 
-print('Максимальное число писем = ' + str(quant_senders * ONE_MAIL_MATCH) + ' из ' + str(quant_mails))
+print('Максимальное число писем = ' + str(quant_senders * ONE_MAIL_MATCH) + ' из ' + str(quant_mails) + ' адресатов')
+print('оптимальный интервал: ' + str(82600 / len(SENDERS) / ONE_MAIL_MATCH) + ' секунд')
+print('с одной почты каждые: ' + str(82600 / ONE_MAIL_MATCH) + ' секунд')
+
 ans = input('продолжаем? да/нет: \n')
+
+current_sender = 0 # счетчик отправителей
+current_title = 0 # счетчик заголовков
+current_img = 0 # счетчик изображений
+
+err_much = 0 # счетчик ошибок
+good_much = 0 # счетчик отправленных
+
 if ans == 'да':
 
-    current_sender = 0 # счетчик отправителей
-    current_title = 0 # счетчик заголовков
-    current_img = 0 # счетчик изображений
 
-    err_much = 0 # счетчик ошибок
-    good_much = 0 # счетчик отправленных
 
     for mail_to in list_emails:
         try:
@@ -64,8 +71,11 @@ if ans == 'да':
             print(str(good_much) + ' отправлено на адрес ' + mail_to + ' с адреса ' + strFrom)
         except:
             err_much += 1
-            print('НЕ отправлено на адрес ' + mail_to)
+            print('НЕ отправлено на адрес ' + mail_to + 'с адреса ' + strFrom)
             print('НЕ отправлено ВСЕГО ' + str(err_much))
+            f_err = open('no_sent.txt', 'a')
+            f_err.write(mail_to + '\n')
+            f_err.close()
 
         # Смена отправителя
         current_sender += 1
@@ -80,7 +90,7 @@ if ans == 'да':
         if current_img >= len(FILES_IMG):
             current_img = 0
 
-        sleep(TIME_RAGE)
+        sleep(random.randint(TIME_RAGE_from, TIME_RAGE_to))
 
 
 else:

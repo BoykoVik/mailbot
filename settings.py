@@ -21,4 +21,5 @@ FILES_IMG = [
     'MMA-Box-new.jpg',
 ]
 
-TIME_RAGE = 5 # время между отправками
+TIME_RAGE_from = 5 # время между отправками 'от'
+TIME_RAGE_to = 10 # время между отправками 'до'
